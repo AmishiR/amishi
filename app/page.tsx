@@ -1,15 +1,21 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import { EnvVarWarning } from "@/components/env-var-warning";
 // import { AuthButton } from "@/components/auth/auth-button";
 import { Hero } from "@/components/hero";
 import { hasEnvVars } from "@/lib/utils";
 
 function Quiz() {
+  const router = useRouter();
+
   return (
     <button
       className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
       type="button"
+      onClick={() => router.push("/quiz")}
     >
-      Quiz
+      Go to Quiz
     </button>
   );
 }
