@@ -10,9 +10,5 @@ export default async function ProtectedPage() {
     redirect("/auth/login");
   }
 
-  return (
-    <div className=" h-screen flex items-center justify-center">
-      <Questionnaire userid={data.claims.sub} />
-    </div>
-  );
+  return <Questionnaire userid={data.claims.sub} />;
 }

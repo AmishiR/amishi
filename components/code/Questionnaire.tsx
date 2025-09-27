@@ -86,9 +86,12 @@ export default function Questionnaire({ userid }: { userid: string }) {
 
   if (loading)
     return (
-      <p className="grid min-h-[50vh] place-items-center">
-        Loading questions...
-      </p>
+      <div className="min-h-screen bg-white flex items-center justify-center p-4">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-300 mx-auto mb-4"></div>
+          <p className="text-gray-600 text-lg">Loading your assessment...</p>
+        </div>
+      </div>
     );
   const q = questions[current];
   const hasSelection = q && answers[q.queid] !== undefined;
@@ -97,86 +100,141 @@ export default function Questionnaire({ userid }: { userid: string }) {
   const valueLabels = ["Never", "Sometimes", "Often", "Almost always"];
 
   return (
-    <div className="min-h-screen grid place-items-center">
-      {/* <div className="w-full max-w-xl rounded-2xl border border-slate-200 bg-white p-6 shadow-md"> */}
-      <div className="w-full max-w-xl rounded-2xl ">
-        <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl ">Quiz</h1>
-          <div className="flex items-center gap-3">
-            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-              Question {current + 1} of {questions.length}
-            </span>
+    <div className="min-h-screen bg-white">
+      <div className="max-w-4xl mx-auto px-4 py-8 sm:py-12">
+        {/* Header */}
+        <div className="text-center mb-8 sm:mb-12">
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-gray-100 border border-gray-200 text-gray-700 text-sm font-medium mb-6">
+            Mental Health Assessment
           </div>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">How are you feeling?</h1>
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto leading-relaxed">
+            Please answer each question honestly based on how you've been feeling recently. Your responses help us understand your mental wellness.
+          </p>
         </div>
 
-        <p className="mb-4 text-lg font-medium">{q.question_text}</p>
-
-        <div className="space-y-3">
-          {[0, 1, 2, 3].map((val, idx) => {
-            const selected = answers[q.queid] === val;
-            const id = `${q.queid}-${val}`;
-            return (
-              <label
-                key={val}
-                htmlFor={id}
-                className={`relative flex cursor-pointer items-center rounded-xl border p-4 pr-12 transition ${
-                  selected
-                    ? "border-blue-600 bg-blue-50"
-                    : "border-slate-200 hover:border-slate-300"
-                }`}
-              >
-                <input
-                  id={id}
-                  type="radio"
-                  name={q.queid}
-                  value={val}
-                  checked={selected}
-                  onChange={() => handleAnswer(q.queid, val)}
-                  className="sr-only"
-                />
-                <span
-                  className={`mr-3 grid h-8 w-8 place-items-center rounded-full border text-sm font-semibold ${
-                    selected
-                      ? "border-blue-600 bg-blue-600 text-white"
-                      : "border-slate-300 text-slate-600"
-                  }`}
-                >
-                  {letters[idx]}
+        {/* Question Card */}
+        <div className="max-w-2xl mx-auto">
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
+            {/* Progress Header */}
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-sm font-medium text-gray-600">Question Progress</span>
+                <span className="text-sm font-medium text-gray-900">
+                  {current + 1} of {questions.length}
                 </span>
-                <span className="text-slate-700">{valueLabels[val]}</span>
-                <span
-                  className={`absolute right-4 top-1/2 h-3 w-3 -translate-y-1/2 rounded-full ${
-                    selected
-                      ? "bg-blue-600 ring-2 ring-blue-600"
-                      : "ring-2 ring-slate-300"
-                  }`}
-                />
-              </label>
-            );
-          })}
-        </div>
+              </div>
+              <div className="w-full bg-gray-100 rounded-full h-2">
+                <div 
+                  className="bg-gray-900 h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${((current + 1) / questions.length) * 100}%` }}
+                ></div>
+              </div>
+            </div>
 
-        <div className="mt-6 flex items-center justify-between">
-          <button
-            type="button"
-            onClick={handlePrev}
-            disabled={current === 0 || submitting}
-            className="rounded-lg border border-slate-200 px-4 py-2 text-slate-700 hover:bg-slate-50 disabled:opacity-50"
-          >
-            Previous
-          </button>
-          <button
-            type="button"
-            onClick={handleNext}
-            disabled={!hasSelection || submitting}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
-          >
-            {current === questions.length - 1
-              ? submitting
-                ? "Submitting..."
-                : "Submit"
-              : "Next Question"}
-          </button>
+            {/* Question */}
+            <div className="mb-8">
+              <div className="flex items-center mb-6">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 mr-3 capitalize">
+                  {q.category}
+                </span>
+                <span className="text-sm text-gray-500">Question {current + 1}</span>
+              </div>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 leading-relaxed">{q.question_text}</h2>
+            </div>
+
+            {/* Answer Options */}
+            <div className="space-y-3 mb-8">
+              {[0, 1, 2, 3].map((val, idx) => {
+                const selected = answers[q.queid] === val;
+                const id = `${q.queid}-${val}`;
+                return (
+                  <label
+                    key={val}
+                    htmlFor={id}
+                    className={`group relative flex cursor-pointer items-center rounded-xl border-2 p-4 sm:p-5 transition-all duration-200 ${
+                      selected
+                        ? "border-gray-900 bg-gray-50 shadow-sm"
+                        : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+                    }`}
+                  >
+                    <input
+                      id={id}
+                      type="radio"
+                      name={q.queid}
+                      value={val}
+                      checked={selected}
+                      onChange={() => handleAnswer(q.queid, val)}
+                      className="sr-only"
+                    />
+                    
+                    {/* Radio Button */}
+                    <div
+                      className={`mr-4 flex h-5 w-5 items-center justify-center rounded-full border-2 transition-colors ${
+                        selected
+                          ? "border-gray-900 bg-gray-900"
+                          : "border-gray-300 group-hover:border-gray-400"
+                      }`}
+                    >
+                      {selected && (
+                        <div className="h-2 w-2 rounded-full bg-white"></div>
+                      )}
+                    </div>
+                    
+                    {/* Answer Text */}
+                    <div className="flex-1">
+                      <span className={`text-base sm:text-lg font-medium ${
+                        selected ? "text-gray-900" : "text-gray-700"
+                      }`}>
+                        {valueLabels[val]}
+                      </span>
+                    </div>
+                    
+                    {/* Letter Badge */}
+                    <span
+                      className={`ml-3 flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold ${
+                        selected
+                          ? "bg-gray-900 text-white"
+                          : "bg-gray-100 text-gray-600 group-hover:bg-gray-200"
+                      }`}
+                    >
+                      {letters[idx]}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+
+            {/* Navigation Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+              <button
+                type="button"
+                onClick={handlePrev}
+                disabled={current === 0 || submitting}
+                className="order-2 sm:order-1 inline-flex items-center justify-center px-6 py-3 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+              >
+                Previous
+              </button>
+              
+              <button
+                type="button"
+                onClick={handleNext}
+                disabled={!hasSelection || submitting}
+                className="order-1 sm:order-2 inline-flex items-center justify-center px-8 py-3 border border-transparent rounded-lg text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-semibold"
+              >
+                {current === questions.length - 1
+                  ? submitting
+                    ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          Submitting...
+                        </>
+                      )
+                    : "Complete Assessment"
+                  : "Next Question"}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
